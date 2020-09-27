@@ -11,7 +11,7 @@ namespace AI_Disolution.Code
     /// system that works great with what I wanted to do.
     /// </summary>
     /// <typeparam name="T"> Anything that may be an Entity, E.G. Player, Enemies, Bullet, etc.</typeparam>
-    public abstract class Entity<T> where T : Entity<T> {
+    abstract class Entity<T> where T : Entity<T> {
 
         public Texture2D Texture;
 

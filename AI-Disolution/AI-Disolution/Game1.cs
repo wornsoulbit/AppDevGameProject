@@ -32,6 +32,7 @@ namespace AI_Disolution {
 
             Entity<Player>.Add(new Player(playerTexture)
             {
+                Bullet = new Bullet(bulletTexture),
                 Position = new Vector2(100, 100),
                 Input = new Input
                 {
@@ -44,6 +45,7 @@ namespace AI_Disolution {
 
             Entity<Player>.Add(new Player(playerTexture)
             {
+                Bullet = new Bullet(bulletTexture),
                 Position = new Vector2(200, 100),
                 Input = new Input
                 {
@@ -67,6 +69,13 @@ namespace AI_Disolution {
                     Entity<Player>.EntitiesToRemove.Add(v);
             }
 
+            foreach (var v in Entity<Bullet>.Get())
+            {
+                v.Update(gameTime);
+                if (v.IsRemoved)
+                    Entity<Bullet>.EntitiesToRemove.Add(v);
+            }
+
             base.Update(gameTime);
         }
 
@@ -76,6 +85,8 @@ namespace AI_Disolution {
 
             spriteBatch.Begin();
             foreach (var v in Entity<Player>.Get())
+                v.Draw(spriteBatch);
+            foreach (var v in Entity<Bullet>.Get())
                 v.Draw(spriteBatch);
             spriteBatch.End();
 
