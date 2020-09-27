@@ -7,9 +7,9 @@ using System.Text;
 namespace AI_Disolution.Code {
     public class Collision {
 
-        private Vector2 Position;
-        private Texture2D Texture;
-        private Vector2 Velocity;
+        public Texture2D Texture;
+        public Vector2 Position;
+        public Vector2 Velocity;
 
         public Collision(Texture2D texture, Vector2 position, Vector2 velocity)
         {
@@ -25,6 +25,7 @@ namespace AI_Disolution.Code {
                 return new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
             }
         }
+
         public bool IsTouchingLeft(Rectangle otherRect)
         {
             return this.Rectangle.Right + this.Velocity.X > otherRect.Left &&

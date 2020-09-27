@@ -17,8 +17,8 @@ namespace AI_Disolution.Code {
 
         public void Update(GameTime gameTime)
         {
-            EntityCollision();
             PlayerControls();
+            EntityCollision();
 
             Position += Velocity;
             Velocity = Vector2.Zero;
@@ -49,6 +49,13 @@ namespace AI_Disolution.Code {
         {
             foreach (var entity in Entities)
             {
+                if (entity == this)
+                    continue;
+
+                Collision.Position = this.Position;
+                Collision.Velocity = this.Velocity;
+                Collision.Texture = this.Texture;
+
                 if (this.Velocity.X > 0 && this.Collision.IsTouchingLeft(entity.Collision.Rectangle) ||
                     this.Velocity.X < 0 && this.Collision.IsTouchingRight(entity.Collision.Rectangle))
                     this.Velocity.X = 0;

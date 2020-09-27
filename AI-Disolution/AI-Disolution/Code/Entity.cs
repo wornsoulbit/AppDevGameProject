@@ -42,7 +42,7 @@ namespace AI_Disolution.Code
 
             // Sets the position of the Origin to the middle of the texture.
             Origin = new Vector2(texture.Width / 2, texture.Height / 2);
-            Collision = new Collision(texture, Position, Velocity);
+            Collision = new Collision(Texture, Position, Velocity);
         }
 
         // Thanks again to Dcrew for this baseline code.

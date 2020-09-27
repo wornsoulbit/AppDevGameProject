@@ -41,6 +41,18 @@ namespace AI_Disolution {
                     Right = Keys.D
                 },
             });
+
+            Entity<Player>.Add(new Player(playerTexture)
+            {
+                Position = new Vector2(200, 100),
+                Input = new Input
+                {
+                    Up = Keys.Up,
+                    Down = Keys.Down,
+                    Left = Keys.Left,
+                    Right = Keys.Right
+                },
+            });
         }
 
         protected override void Update(GameTime gameTime)
