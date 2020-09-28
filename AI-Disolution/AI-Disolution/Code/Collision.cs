@@ -10,6 +10,8 @@ namespace AI_Disolution.Code {
         public Texture2D Texture;
         public Vector2 Position;
         public Vector2 Velocity;
+        
+
         public enum Side { None = 0, Left = 1, Right = 2, Top = 3, Bottom = 4}
 
         public Collision(Texture2D texture, Vector2 position, Vector2 velocity)

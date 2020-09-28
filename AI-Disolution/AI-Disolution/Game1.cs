@@ -30,7 +30,7 @@ namespace AI_Disolution {
             var enemyTexture = Content.Load<Texture2D>("Enemy");
             var bulletTexture = Content.Load<Texture2D>("Bullet");
 
-            Entity<Player>.Add(new Player(playerTexture)
+            Entity.Add(new Player(playerTexture)
             {
                 Bullet = new Bullet(bulletTexture),
                 Position = new Vector2(100, 100),
@@ -43,7 +43,7 @@ namespace AI_Disolution {
                 },
             });
 
-            Entity<Player>.Add(new Player(playerTexture)
+            Entity.Add(new Player(playerTexture)
             {
                 Bullet = new Bullet(bulletTexture),
                 Position = new Vector2(200, 100),
@@ -55,6 +55,18 @@ namespace AI_Disolution {
                     Right = Keys.Right
                 },
             });
+
+            Entity.Add(new Enemy(enemyTexture)
+            {
+                Bullet = new Bullet(bulletTexture),
+                Position = new Vector2(100, 200),
+            });
+
+            Entity.Add(new Enemy(enemyTexture)
+            {
+                Bullet = new Bullet(bulletTexture),
+                Position = new Vector2(300, 100),
+            });
         }
 
         protected override void Update(GameTime gameTime)
@@ -62,18 +74,11 @@ namespace AI_Disolution {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            foreach (var v in Entity<Player>.Get())
+            foreach (var v in Entity.Get())
             {
                 v.Update(gameTime);
                 if (v.IsRemoved)
-                    Entity<Player>.EntitiesToRemove.Add(v);
-            }
-
-            foreach (var v in Entity<Bullet>.Get())
-            {
-                v.Update(gameTime);
-                if (v.IsRemoved)
-                    Entity<Bullet>.EntitiesToRemove.Add(v);
+                    Entity.EntitiesToRemove.Add(v);
             }
 
             base.Update(gameTime);
@@ -84,10 +89,10 @@ namespace AI_Disolution {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            foreach (var v in Entity<Player>.Get())
+
+            foreach (var v in Entity.Get())
                 v.Draw(spriteBatch);
-            foreach (var v in Entity<Bullet>.Get())
-                v.Draw(spriteBatch);
+
             spriteBatch.End();
 
             base.Draw(gameTime);

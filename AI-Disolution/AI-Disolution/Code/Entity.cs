@@ -6,12 +6,7 @@ using System.Text;
 
 namespace AI_Disolution.Code
 {
-    /// <summary>
-    /// Big thanks to Dcrew from discord.gg/MNj28aV (Monogame discord) for a baseline
-    /// system that works great with what I wanted to do.
-    /// </summary>
-    /// <typeparam name="T"> Anything that may be an Entity, E.G. Player, Enemies, Bullet, etc.</typeparam>
-    abstract class Entity<T> where T : Entity<T> {
+    abstract class Entity {
 
         public Texture2D Texture;
 
@@ -20,21 +15,44 @@ namespace AI_Disolution.Code
         public Vector2 Direction;
         public Vector2 Velocity;
         public Input Input;
-        public Collision Collision;
+        /*public Collision Collision;*/
 
         public float Speed = 4f;
         public float LifeSpan = 0f;
         public bool IsRemoved = false;
 
-        public static readonly List<Entity<T>> Entities = new List<Entity<T>>();
-        public static readonly List<Entity<T>> EntitiesToRemove = new List<Entity<T>>();
+        public static Dictionary<Type, List<Entity>> EntityDictionary = new Dictionary<Type, List<Entity>>();
+        public static readonly List<Entity> Entities = new List<Entity>();
+        public static readonly List<Entity> EntitiesToRemove = new List<Entity>();
+        public enum Side { None = 0, Left = 1, Right = 2, Top = 3, Bottom = 4 }
 
-        /// <summary>
-        /// Adds a given entity to the List.
-        /// </summary>
-        /// <param name="entity"> Anything that may be an Entity.</param>
-        public static void Add(T entity) => Entities.Add(entity);
-        private static void Remove(T entity) => Entities.Remove(entity);
+        public Rectangle Rectangle
+        {
+            get
+            {
+                return new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+            }
+        }
+
+        public static void Add(Entity entity)
+        {
+            Entities.Add(entity);
+
+            if (!EntityDictionary.ContainsKey(entity.GetType()))
+                EntityDictionary.Add(entity.GetType(), Entities);
+        }
+
+        private static void Remove(Entity entity) => Entities.Remove(entity);
+
+        public static IEnumerable<Entity> Get()
+        {
+            foreach (var v in Entities.ToArray())
+                yield return v;
+
+            foreach (var entity in EntitiesToRemove.ToArray())
+                Remove(entity);
+            yield break;
+        }
 
         public Entity(Texture2D texture)
         {
@@ -42,27 +60,51 @@ namespace AI_Disolution.Code
 
             // Sets the position of the Origin to the middle of the texture.
             Origin = new Vector2(texture.Width / 2, texture.Height / 2);
-            Collision = new Collision(Texture, Position, Velocity);
+            /*Collision = new Collision(Texture, Position, Velocity);*/
         }
 
-        // Thanks again to Dcrew for this baseline code.
-        public static IEnumerable<T> Get()
-        {
-            foreach (var s in Entities)
-                yield return (T)s;
+        public virtual void Update(GameTime gameTime) { }
 
-            // Removes the entity after going through the list, to avoid a null point in the list.
-            foreach (var entity in EntitiesToRemove)
-                Remove((T)entity);
-            yield break;
-        }
-
-        public abstract T Clone();
+        public abstract object Clone();
 
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Texture, Position, null, Color.White, 0f, Origin, 1, SpriteEffects.None, 0);
         }
+
+        #region Collision
+        protected bool IsTouchingLeft(Rectangle otherRect)
+        {
+            return this.Rectangle.Right + this.Velocity.X > otherRect.Left &&
+                this.Rectangle.Left < otherRect.Left &&
+                this.Rectangle.Bottom > otherRect.Top &&
+                this.Rectangle.Top < otherRect.Bottom;
+        }
+
+        protected bool IsTouchingRight(Rectangle otherRect)
+        {
+            return this.Rectangle.Left + this.Velocity.X < otherRect.Right &&
+                this.Rectangle.Right > otherRect.Right &&
+                this.Rectangle.Bottom > otherRect.Top &&
+                this.Rectangle.Top < otherRect.Bottom;
+        }
+
+        protected bool IsTouchingTop(Rectangle otherRect)
+        {
+            return this.Rectangle.Bottom + this.Velocity.Y > otherRect.Top &&
+                this.Rectangle.Top < otherRect.Top &&
+                this.Rectangle.Right > otherRect.Left &&
+                this.Rectangle.Left < otherRect.Right;
+        }
+
+        protected bool IsTouchingBottom(Rectangle otherRect)
+        {
+            return this.Rectangle.Top + this.Velocity.Y < otherRect.Bottom &&
+                this.Rectangle.Bottom > otherRect.Bottom &&
+                this.Rectangle.Right > otherRect.Left &&
+                this.Rectangle.Left < otherRect.Right;
+        }
+        #endregion
 
     }
 }

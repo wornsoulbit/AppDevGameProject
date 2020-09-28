@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace AI_Disolution.Code {
-    class Player : Entity<Player> {
+    class Player : Entity {
 
         private MouseState currentMouseState;
         private MouseState previousMouseState;
@@ -16,7 +16,7 @@ namespace AI_Disolution.Code {
 
         public Player(Texture2D texture) : base(texture) { }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             PlayerControls();
             EntityCollision();
@@ -63,33 +63,41 @@ namespace AI_Disolution.Code {
             else
                 bullet.LifeSpan = this.LifeSpan;
 
-            Entity<Bullet>.Add(bullet);
+            Add(bullet);
         }
 
         private void EntityCollision()
         {
 
-            Collision.Position = this.Position;
-            Collision.Velocity = this.Velocity;
-            Collision.Texture = this.Texture;
-
             foreach (var entity in Entities)
             {
+
                 if (entity == this)
                     continue;
 
-                Enum side = Collision.GetSide(this.Collision.Rectangle, entity.Collision.Rectangle);
-
-                if (Velocity.X > 0 && side.Equals(Collision.Side.Left) || Velocity.X < 0 && side.Equals(Collision.Side.Right))
+                if (Velocity.X > 0 && IsTouchingLeft(entity.Rectangle) ||
+                    Velocity.X < 0 && IsTouchingRight(entity.Rectangle))
                     Velocity.X = 0;
 
-                if (Velocity.Y > 0 && side.Equals(Collision.Side.Top) || Velocity.Y < 0 && side.Equals(Collision.Side.Bottom))
+                if (Velocity.Y > 0 && IsTouchingTop(entity.Rectangle) ||
+                    Velocity.Y < 0 && IsTouchingBottom(entity.Rectangle))
                     Velocity.Y = 0;
-
             }
+
+            /*foreach (var entity in EntityDictionary[typeof(Enemy)])
+            {
+
+                if (Velocity.X > 0 && IsTouchingLeft(entity.Rectangle) ||
+                    Velocity.X < 0 && IsTouchingRight(entity.Rectangle))
+                    Velocity.X = 0;
+
+                if (Velocity.Y > 0 && IsTouchingTop(entity.Rectangle) ||
+                    Velocity.Y < 0 && IsTouchingBottom(entity.Rectangle))
+                    Velocity.Y = 0;
+            }*/
         }
 
-        public override Player Clone() => new Player(Texture)
+        public override object Clone() => new Player(Texture)
         {
 
         };
